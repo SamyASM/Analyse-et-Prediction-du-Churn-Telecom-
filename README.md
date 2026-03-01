@@ -1,107 +1,66 @@
 # Analyse et Prédiction du Churn Telecom
 
-Projet de machine learning visant à anticiper la résiliation (churn) clients à partir d’un dataset volontairement très dégradé (valeurs manquantes, incohérences métier, formats hétérogènes, variables mal typées). :contentReference[oaicite:0]{index=0}
+Projet de machine learning visant à prédire la résiliation client (churn) dans un contexte télécom, à partir d’un dataset volontairement dégradé (valeurs manquantes, incohérences, erreurs de typage).
 
 ## Contexte métier
 
-- La problématique posée est la réduction d’un churn élevé et l’identification de profils à risque pour prioriser des actions marketing sous contrainte de capacité (ex: appels sortants limités). :contentReference[oaicite:1]{index=1}
-- Coût d’erreur asymétrique
-- L’erreur la plus critique est de prédire “reste” alors que le client va partir (perte de revenu + coût d’acquisition)
-- Objectif implicite orienté rappel/coverage des churneurs dans le haut du ranking (logique top-k / lift). :contentReference[oaicite:2]{index=2}
+Le churn représente une perte directe de revenu.  
+L’objectif est d’identifier les clients à risque afin de prioriser des actions de rétention sous contrainte opérationnelle (capacité limitée d’appels ou d’offres).
 
-## Contenu du dépôt
+Le coût d’erreur est asymétrique :
+- Prédire qu’un client reste alors qu’il part = perte business critique
+- La priorité est donc le rappel sur la classe churn
 
-- Buisness_Understanding.ipynb
-  - Formalisation métier du churn
-  - Priorisation des erreurs (coût business)
-  - Intuition lift/top 5% (capacité opérationnelle) :contentReference[oaicite:3]{index=3}
-- PROJET.ipynb
-  - Data understanding
-  - Diagnostic qualité des données
-  - Nettoyage et corrections d’incohérences
-  - Baseline de modélisation scikit-learn (RandomForestClassifier) :contentReference[oaicite:4]{index=4}
+## Structure du projet
+
+- `Buisness_Understanding.ipynb` : cadrage métier et réflexion sur la priorisation
+- `PROJET.ipynb` : nettoyage des données, exploration, modélisation
 
 ## Données
 
-Le notebook charge un fichier CSV local nommé telco_customer_data_v2.csv (chemin Windows présent dans le code). :contentReference[oaicite:5]{index=5}
+- ~70 000 observations
+- 21 variables
+- Variables démographiques, contractuelles, services, facturation
+- Variable cible : `Churn`
 
-- Dimensions observées au chargement: 70 000 lignes, 21 colonnes :contentReference[oaicite:6]{index=6}
-- Variables
-  - Démographiques: gender, SeniorCitizen, Partner, Dependents
-  - Compte / contrat: tenure, Contract, PaperlessBilling, PaymentMethod
-  - Services: PhoneService, MultipleLines, InternetService, OnlineSecurity, OnlineBackup, DeviceProtection, TechSupport, StreamingTV, StreamingMovies
-  - Facturation: MonthlyCharges, TotalCharges
-  - Cible: Churn :contentReference[oaicite:7]{index=7}
+## Data Preparation
 
-## Problèmes de qualité identifiés
+Problèmes traités :
+- Valeurs manquantes
+- Types incohérents (TotalCharges importé en object)
+- Valeurs négatives sur tenure
+- Outliers extrêmes
+- Incohérences entre MonthlyCharges et TotalCharges
 
-- Valeurs manquantes sur plusieurs variables (ex: gender, Partner, Dependents, PaymentMethod, TotalCharges, etc.) :contentReference[oaicite:8]{index=8}
-- Types incohérents
-  - TotalCharges est importé en type object alors qu’il devrait être numérique comme MonthlyCharges :contentReference[oaicite:9]{index=9}
-- Valeurs métier incohérentes
-  - tenure négatif (ex: -5, -10) repéré dans des sous-ensembles :contentReference[oaicite:10]{index=10}
-  - TotalCharges à 0 ou manquant malgré des MonthlyCharges non nuls (cas extrêmes à traiter)
-  - Présence de chaînes parasites (ex: “USD” dans TotalCharges) :contentReference[oaicite:11]{index=11}
-- Outliers massifs
-  - TotalCharges max très élevé (ordre de 1e6), indiquant erreurs ou cas extrêmes :contentReference[oaicite:12]{index=12}
-
-## Nettoyage effectué (exemples visibles)
-
-- Contrôle des statistiques après nettoyage et cohérence moyenne
-  - tenure moyen ~ 22 mois
-  - MonthlyCharges moyen ~ 60
-  - TotalCharges moyen ~ 1800, cohérent avec 60 x 22 :contentReference[oaicite:13]{index=13}
-- Gestion de cas incohérents sur TotalCharges (min à 0)
-  - Identification de 2 lignes sans données financières exploitables (MonthlyCharges manquant et TotalCharges = 0)
-  - Suppression de ces lignes (indices 7313, 36810) :contentReference[oaicite:14]{index=14}
+Nettoyage et corrections appliqués avant modélisation.
 
 ## Modélisation
 
-Le notebook importe et utilise scikit-learn avec une base RandomForestClassifier. :contentReference[oaicite:15]{index=15}
+Baseline :
+- RandomForestClassifier (scikit-learn)
+- Train / test split
+- Évaluation via accuracy, precision, recall
 
-- Split train/test: train_test_split
-- Modèle: RandomForestClassifier
-- Mesures importées: accuracy_score, classification_report :contentReference[oaicite:16]{index=16}
+Orientation métier :
+- Optimisation du rappel churn
+- Logique de priorisation top-k
 
-Note: l’orientation métier exposée dans Business Understanding met l’accent sur la minimisation de l’erreur “prédit reste alors que part”, ce qui correspond en pratique à une recherche de rappel élevé sur la classe churn (ou à un choix de seuil / top-k orienté churn). :contentReference[oaicite:17]{index=17}
+## Stack technique
 
-## Installation
+- Python
+- pandas
+- numpy
+- scikit-learn
+- matplotlib / seaborn
 
-- Python 3.x
-- Dépendances principales
-  - numpy
-  - pandas
-  - matplotlib
-  - seaborn
-  - scikit-learn :contentReference[oaicite:18]{index=18}
+## Améliorations possibles
 
-Exemple (environnement local):
+- Pipeline sklearn complet (ColumnTransformer)
+- Gestion du déséquilibre de classe
+- Optimisation du seuil métier
+- Validation croisée
+- Industrialisation (joblib, Docker, API)
 
-- pip install numpy pandas matplotlib seaborn scikit-learn jupyter
+## Auteur
 
-## Exécution
-
-- Ouvrir les notebooks dans Jupyter / VS Code
-  - Buisness_Understanding.ipynb
-  - PROJET.ipynb :contentReference[oaicite:19]{index=19}
-- Adapter le chemin du CSV dans PROJET.ipynb
-  - Remplacer le chemin Windows local par le chemin de votre machine (ou placer le CSV dans le repo et utiliser un chemin relatif). :contentReference[oaicite:20]{index=20}
-
-## Résultats attendus
-
-- Un diagnostic clair des défauts de qualité (missing, types, incohérences)
-- Un dataset corrigé permettant un entraînement sans erreurs de parsing
-- Une baseline de classification (Random Forest) et des métriques standards
-- Un cadrage business expliquant pourquoi la priorisation des churneurs (lift/top-k) est centrale, au-delà d’une simple accuracy. :contentReference[oaicite:21]{index=21}
-
-## Pistes d’amélioration (logique produit)
-
-- Encodage robuste + pipeline sklearn (ColumnTransformer, OneHotEncoder, SimpleImputer)
-- Gestion explicite du déséquilibre de classe (class_weight, métriques PR-AUC, rappel churn)
-- Optimisation du seuil en fonction d’une capacité opérationnelle (top 5%, top 10%) et suivi lift/gains chart
-- Validation croisée + tuning hyperparamètres
-- Export modèle + reproductibilité (requirements.txt, random_state, sauvegarde joblib)
-
-## Samy ASMA
-
-- SamyASM :contentReference[oaicite:22]{index=22}
+Samy ASMA
