@@ -1,66 +1,63 @@
+Voici une proposition de README.md structurée selon votre demande et la méthodologie CRISP-DM, prête à être copiée-collée :
+Markdown
+
 # Analyse et Prédiction du Churn Telecom
 
-Projet de machine learning visant à prédire la résiliation client (churn) dans un contexte télécom, à partir d’un dataset volontairement dégradé (valeurs manquantes, incohérences, erreurs de typage).
+Ce projet de machine learning vise à prédire la résiliation client (churn) au sein d'une entreprise de télécommunications. L'approche se concentre sur l'impact business et la gestion d'un dataset volontairement dégradé (valeurs manquantes, incohérences, erreurs de typage).
 
-## Contexte métier
+## 🚀 Ordre de lecture conseillé
 
-Le churn représente une perte directe de revenu.  
-L’objectif est d’identifier les clients à risque afin de prioriser des actions de rétention sous contrainte opérationnelle (capacité limitée d’appels ou d’offres).
+Pour bien comprendre la démarche, il est recommandé de suivre cet ordre :
+1.  **`Buisness_Understanding.ipynb`** : Cadrage stratégique, définition des objectifs et réflexion sur la priorité opérationnelle.
+2.  **`PROJET_COMPLET.ipynb`** : Cycle complet de la donnée (Nettoyage, Exploration, Modélisation, Évaluation).
 
-Le coût d’erreur est asymétrique :
-- Prédire qu’un client reste alors qu’il part = perte business critique
-- La priorité est donc le rappel sur la classe churn
+---
 
-## Structure du projet
+## 📊 Méthodologie (CRISP-DM)
 
-- `Buisness_Understanding.ipynb` : cadrage métier et réflexion sur la priorisation
-- `PROJET.ipynb` : nettoyage des données, exploration, modélisation
+### 1. Business Understanding
+L’entreprise a perdu **53% de ses clients** ces 4 dernières années, représentant une perte de revenus majeure. 
+- **Objectif :** Réduire ce taux de perte en optimisant les coûts marketing.
+- **Contrainte :** Capacité de traitement limitée (ex: top 5% des clients les plus à risque pour des appels sortants).
+- **Enjeu :** Maximiser le **Recall** (rappel) pour ne manquer aucun client sur le départ.
 
-## Données
+### 2. Data Understanding
+Le dataset contient **70 043 observations** et **21 variables** (démographie, services, contrats, facturation).
+Une phase d'exploration a permis d'identifier :
+- Des types de données erronés (ex: `TotalCharges`).
+- Des valeurs manquantes et des incohérences temporelles (tenure négative ou > 900 mois).
 
-- ~70 000 observations
-- 21 variables
-- Variables démographiques, contractuelles, services, facturation
-- Variable cible : `Churn`
+### 3. Data Preparation
+Nettoyage rigoureux des données :
+- Conversion numérique des colonnes de facturation.
+- Suppression/Imputation des valeurs aberrantes (outliers).
+- Traitement des doublons et des incohérences entre `MonthlyCharges` et `TotalCharges`.
+- Feature Engineering pour préparer les variables catégorielles.
 
-## Data Preparation
+### 4. Modeling
+- **Algorithme :** RandomForestClassifier (Scikit-Learn).
+- **Approche :** Division Train/Test et mise en place d'une base de référence (Baseline).
 
-Problèmes traités :
-- Valeurs manquantes
-- Types incohérents (TotalCharges importé en object)
-- Valeurs négatives sur tenure
-- Outliers extrêmes
-- Incohérences entre MonthlyCharges et TotalCharges
+### 5. Evaluation
+- Le modèle atteint un **Recall ≥ 75%**, surpassant largement le hasard (stratégie actuelle ~26%).
+- Utilisation du **Lift** pour valider l'efficacité sur le "top-k" (capacité du modèle à concentrer les churners réels dans les premiers centiles).
 
-Nettoyage et corrections appliqués avant modélisation.
+### 6. Deployment (Recommandations)
+- **Priorisation :** Cibler le top 5% des clients à risque pour les appels humains.
+- **Stratégie contrat :** Inciter au passage en contrats 1 ou 2 ans (qui divisent le risque de churn par 4 à 14).
+- **Service :** Investigation nécessaire sur la satisfaction des abonnés "Fibre optique", très volatils.
 
-## Modélisation
+---
 
-Baseline :
-- RandomForestClassifier (scikit-learn)
-- Train / test split
-- Évaluation via accuracy, precision, recall
+## 🛠️ Stack technique
+- **Langage :** Python
+- **Librairies :** Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn
 
-Orientation métier :
-- Optimisation du rappel churn
-- Logique de priorisation top-k
-
-## Stack technique
-
-- Python
-- pandas
-- numpy
-- scikit-learn
-- matplotlib / seaborn
-
-## Améliorations possibles
-
-- Pipeline sklearn complet (ColumnTransformer)
-- Gestion du déséquilibre de classe
-- Optimisation du seuil métier
-- Validation croisée
-- Industrialisation (joblib, Docker, API)
+## 📈 Améliorations possibles
+- Mise en place de **Pipelines Scikit-learn** complets (ColumnTransformer).
+- Gestion fine du déséquilibre de classe (SMOTE, pondération).
+- Optimisation des hyperparamètres (GridSearchCV).
+- Industrialisation (API de prédiction).
 
 ## Auteur
-
 Samy ASMA
