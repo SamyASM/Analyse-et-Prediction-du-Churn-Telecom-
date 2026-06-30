@@ -22,6 +22,8 @@ Le code de ce projet a été entièrement **structuré de manière modulaire**.
 
 ---
 ## 📁 Structure du Projet
+
+```text
 Analyse-et-Prediction-du-Churn-Telecom/
 ├── telco_churn/                  # Package de scripts Python
 │   ├── __init__.py
@@ -33,4 +35,6 @@ Analyse-et-Prediction-du-Churn-Telecom/
 │   ├── Buisness_Understanding.ipynb
 │   └── PROJET_COMPLET.ipynb
 ├── main.py                       # Script principal d'exécution (pipeline global)
-├── README.md                     # Vous êtes ici
+└── README.md                     # Vous êtes ici
+
+
